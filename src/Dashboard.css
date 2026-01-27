@@ -1,0 +1,87 @@
+.dashboard {
+  padding: 20px 0;
+}
+
+.dashboard-header {
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.dashboard-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 5px;
+}
+
+.dashboard-header p {
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+.dashboard-card {
+  margin-bottom: 30px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  transition: box-shadow 0.3s ease;
+}
+
+.dashboard-card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-card .card-header {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  padding: 1.25rem;
+}
+
+.dashboard-card .card-header h5 {
+  margin: 0;
+  color: #212529;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.dashboard-card .card-body {
+  padding: 1.5rem;
+}
+
+.dashboard-card .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-card .form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.dashboard-card .dropdown-toggle {
+  text-transform: none;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.dashboard-card .accordion-header {
+  padding: 1rem;
+}
+
+.dashboard-card .accordion-button {
+  font-weight: 500;
+  color: #212529;
+  font-size: 1rem;
+}
+
+.dashboard-card .accordion-button:not(.collapsed) {
+  background-color: #e7f3ff;
+  color: #0c63e4;
+}
+
+.badge {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.65rem;
+}
