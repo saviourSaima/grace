@@ -27,8 +27,8 @@ const Dashboard = () => {
     return (
         <div className="dashboard">
             <header className="dashboard-header">
-                <h1>Dashboard</h1>
-                <p>Production-Ready React Application</p>
+                <h1>Grace</h1>
+                <p>Childcare Management System</p>
             </header>
 
             <Card className="dashboard-card">
