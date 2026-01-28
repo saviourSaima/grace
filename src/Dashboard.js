@@ -3,12 +3,9 @@ import { Form, Dropdown, Accordion, Card } from 'react-bootstrap';
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const [searchValue, setSearchValue] = useState('');
     const [selectedFilters, setSelectedFilters] = useState({});
-
-    const handleSearchChange = (value) => {
-        setSearchValue(value);
-    };
+    const [searchInput, setSearchInput] = useState('');
+    const [age, setAge] = useState('');
 
     const handleFilterChange = (section, value) => {
         setSelectedFilters(prev => ({
@@ -32,28 +29,29 @@ const Dashboard = () => {
             </header>
 
             <Card className="dashboard-card">
-                <Card.Header>
-                    <h5>Search & Filter</h5>
-                </Card.Header>
                 <Card.Body>
                     <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Search Field</Form.Label>
-                            <Dropdown className="w-100">
-                                <Dropdown.Toggle variant="primary" className="w-100 text-start">
-                                    {searchValue || 'Select an option'}
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu className="w-100">
-                                    {searchOptions.map((option, idx) => (
-                                        <Dropdown.Item
-                                            key={idx}
-                                            onClick={() => handleSearchChange(option)}
-                                        >
-                                            {option}
-                                        </Dropdown.Item>
-                                    ))}
-                                </Dropdown.Menu>
-                            </Dropdown>
+                        <Form.Group className="mb-3" style={{display:"flex", alignItems:"center"}}>
+                            <Form.Label style={{marginRight:"10px", whiteSpace:"nowrap"}}>Child Name :</Form.Label>
+                            <div style={{position:"relative", flex:2, marginRight:"20px"}}>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Search child name"
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                />
+                                {searchInput && searchOptions.filter(option => new RegExp(searchInput, 'i').test(option)).length > 0 && (
+                                    <div className="suggestions" style={{border: '1px solid #ccc', maxHeight: '200px', overflowY: 'auto', position: 'absolute', background: 'white', zIndex: 1000, width: '100%', top: '100%'}}>
+                                        {searchOptions.filter(option => new RegExp(searchInput, 'i').test(option)).map((option, idx) => (
+                                            <div key={idx} onClick={() => setSearchInput(option)} style={{padding: '5px', cursor: 'pointer', borderBottom: '1px solid #eee'}}>
+                                                {option}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            <Form.Label style={{marginRight:"10px", whiteSpace:"nowrap"}}>Age :</Form.Label>
+                            <Form.Control style={{flex:1}} type="text" value={age} onChange={(e) => setAge(e.target.value)} />
                         </Form.Group>
                     </Form>
                 </Card.Body>
