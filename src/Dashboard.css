@@ -51,6 +51,10 @@
 
 .dashboard-card .form-group {
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
 }
 
 .dashboard-card .form-label {
@@ -58,6 +62,8 @@
   color: #495057;
   margin-bottom: 0.75rem;
   font-size: 0.95rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .dashboard-card .dropdown-toggle {
@@ -84,4 +90,230 @@
 .badge {
   font-size: 0.85rem;
   padding: 0.35rem 0.65rem;
+}
+
+/* Input wrapper and form styles */
+.responsive-form-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.responsive-input-wrapper {
+  position: relative;
+  flex: 2;
+  min-width: 200px;
+  width: 100%;
+}
+
+.responsive-age-input {
+  flex: 1;
+  min-width: 150px;
+}
+
+.responsive-accordion-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.responsive-dropdown-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Suggestions dropdown */
+.suggestions {
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  background: white;
+  z-index: 1000;
+  width: 100%;
+  top: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.suggestion-item {
+  padding: 5px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Tablet and below (768px and below) */
+@media (max-width: 768px) {
+  .dashboard-header h1 {
+    font-size: 2rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.9rem;
+  }
+
+  .dashboard {
+    padding: 15px 0;
+  }
+
+  .dashboard-card .card-body {
+    padding: 1rem;
+  }
+
+  .dashboard-card .card-header {
+    padding: 1rem;
+  }
+
+  .responsive-form-group,
+  .responsive-accordion-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .responsive-form-group .form-label,
+  .responsive-accordion-form .form-label {
+    margin-bottom: 0.5rem;
+  }
+
+  .responsive-input-wrapper,
+  .responsive-dropdown-wrapper,
+  .responsive-age-input {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .dashboard-card .form-control {
+    width: 100%;
+  }
+
+  .dashboard-card .dropdown-toggle {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.75rem;
+  }
+}
+
+/* Small devices (576px and below) */
+@media (max-width: 576px) {
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.85rem;
+  }
+
+  .dashboard {
+    padding: 10px 0;
+  }
+
+  .dashboard-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+  }
+
+  .dashboard-card {
+    margin-bottom: 20px;
+  }
+
+  .dashboard-card .card-body {
+    padding: 0.75rem;
+  }
+
+  .dashboard-card .card-header {
+    padding: 0.75rem;
+  }
+
+  .dashboard-card .card-header h5 {
+    font-size: 1rem;
+  }
+
+  .dashboard-card .form-label {
+    font-size: 0.85rem;
+  }
+
+  .dashboard-card .form-control {
+    font-size: 0.9rem;
+  }
+
+  .dashboard-card .dropdown-toggle {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .dashboard-card .accordion-button {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+
+  .dashboard-card .accordion-header {
+    padding: 0.5rem;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .responsive-form-group,
+  .responsive-accordion-form {
+    gap: 8px;
+  }
+
+  .suggestions {
+    max-height: 150px;
+    font-size: 0.9rem;
+  }
+
+  .suggestion-item {
+    padding: 4px;
+  }
+}
+
+/* Extra small devices (360px and below) */
+@media (max-width: 360px) {
+  .dashboard-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.8rem;
+  }
+
+  .dashboard-card .card-body {
+    padding: 0.5rem;
+  }
+
+  .dashboard-card .card-header {
+    padding: 0.5rem;
+  }
+
+  .dashboard-card .form-label {
+    font-size: 0.8rem;
+  }
+
+  .dashboard-card .form-control {
+    font-size: 0.85rem;
+  }
+
+  .responsive-form-group,
+  .responsive-accordion-form {
+    gap: 5px;
+  }
+
+  .suggestions {
+    max-height: 120px;
+    font-size: 0.85rem;
+  }
+
+  .suggestion-item {
+    padding: 3px;
+  }
 }
