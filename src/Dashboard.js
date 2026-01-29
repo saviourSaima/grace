@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Form, Dropdown, Accordion, Card } from 'react-bootstrap';
 import './Dashboard.css';
 import { childDetails } from './childData';
+import { goalDetails } from './goalDetails';
 
 const Dashboard = () => {
     const [searchInput, setSearchInput] = useState('');
@@ -36,7 +37,16 @@ const Dashboard = () => {
     const filteredChildren = childDetails.filter(child => new RegExp(searchInput, 'i').test(child.firstName));
     const shouldShowSuggestions = searchInput && !selectedChild && filteredChildren.length > 0;
 
-    const accordions = ["FINE_MOTOR","GROSS_MOTOR","PLAY_SKILL","SOCIAL_INTERACTION","ADL","SENSORY_INTEGRATION","BALANCE_AND_COORDINATION","BILATERAL_INTEGRATION","BRAIN_GYM","HIGHER_FUNCTIONING"];
+    const GROSS_MOTOR = goalDetails.filter((goal) => goal.domain === "GROSS_MOTOR");
+    const FINE_MOTOR = goalDetails.filter((goal) => goal.domain === "FINE_MOTOR");
+    const BALANCE_AND_COORDINATION = goalDetails.filter((goal) => goal.domain === "BALANCE_AND_COORDINATION");
+    const SOCIAL_INTERACTION = goalDetails.filter((goal) => goal.domain === "SOCIAL_INTERACTION");
+    const ADL = goalDetails.filter((goal) => goal.domain === "ADL");
+    const PLAY_SKILL = goalDetails.filter((goal) => goal.domain === "PLAY_SKILL");
+    const BRAIN_GYM = goalDetails.filter((goal) => goal.domain === "BRAIN_GYM");
+    const HIGHER_FUNCTIONING = goalDetails.filter((goal) => goal.domain === "HIGHER_FUNCTIONING");
+    const BILATERAL_INTEGRATION = goalDetails.filter((goal) => goal.domain === "BILATERAL_INTEGRATION");
+    const SENSORY_INTEGRATION = goalDetails.filter((goal) => goal.domain === "SENSORY_INTEGRATION");
 
     return (
         <div className="dashboard">
@@ -97,45 +107,266 @@ const Dashboard = () => {
                 </Card.Header>
                 <Card.Body>
                     <Accordion alwaysOpen>
-                        {accordions.map((accordionHeader, idx) => {
-                            return (
-                                <Accordion.Item eventKey={idx.toString()} key={accordionHeader}>
-                                    <Accordion.Header>
-                                        {accordionHeader}
-                                        {/* {selectedFilters[accordionHeader] && (
-                                            <span className="badge bg-info ms-2">
-                                                {selectedFilters[accordionHeader]}
-                                            </span>
-                                        )} */}
-                                    </Accordion.Header>
-                                    <Accordion.Body>
-                                        <Form.Group className="responsive-accordion-form">
-                                            <Form.Label>Goal 1</Form.Label>
-                                            <div className="responsive-dropdown-wrapper">
-                                                <Dropdown>
-                                                    <Dropdown.Toggle
-                                                        variant="secondary"
-                                                        className="w-100 text-start"
-                                                    >
-                                                        {/* {selectedFilters[accordionHeader] || 'Select Goal level'} */}
-                                                    </Dropdown.Toggle>
-                                                    <Dropdown.Menu className="w-100">
-                                                        {/* {options.map((option, idx) => (
-                                                            <Dropdown.Item
-                                                                key={idx}
-                                                                onClick={() => handleFilterChange(sectionKey, option)}
-                                                            >
-                                                                {option}
-                                                            </Dropdown.Item>
-                                                        ))} */}
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
-                                            </div>
-                                        </Form.Group>
-                                    </Accordion.Body>
-                                </Accordion.Item>
-                            );
-                        })}
+                        <Accordion.Item eventKey="0">
+                          <Accordion.Header>GROSS MOTOR</Accordion.Header>
+                          <Accordion.Body>
+                            <div className="goals-grid">
+                              {GROSS_MOTOR.map((goal, idx) => (
+                                <div key={idx} className="goal-item">
+                                  <div className="goal-row" style={{position:"relative"}}>
+                                    <Form.Label className="goal-label">{goal.name}</Form.Label>
+                                    <Dropdown style={{position:"absolute", right:"0"}}>
+                                      <Dropdown.Toggle variant="success" id={`dropdown-${idx}`}>
+                                        Achievement Level
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        <Dropdown.Item href="#/action-1">NOT STARTED</Dropdown.Item>
+                                        <Dropdown.Item href="#/action-2">BEGINNER</Dropdown.Item>
+                                        <Dropdown.Item href="#/action-3">INTERMEDIATE</Dropdown.Item>
+                                        <Dropdown.Item href="#/action-4">ADVANCED</Dropdown.Item>
+                                        <Dropdown.Item href="#/action-5">MASTER</Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="1">
+                          <Accordion.Header>FINE MOTOR</Accordion.Header>
+                          <Accordion.Body>
+                           <div className="goals-grid">
+                              {FINE_MOTOR.map((goal, idx) => (
+                                <div key={idx} className="goal-item">
+                                  <div className="goal-row" style={{position:"relative"}}>
+                                    <Form.Label className="goal-label">{goal.name}</Form.Label>
+                                    <Dropdown style={{position:"absolute", right:"0"}}>
+                                      <Dropdown.Toggle variant="success" id={`dropdown-${idx}`}>
+                                        Achievement Level
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        <Dropdown.Item href="#/action-1">NOT STARTED</Dropdown.Item>
+                                        <Dropdown.Item href="#/action-2">BEGINNER</Dropdown.Item>
+                                        <Dropdown.Item href="#/action-3">INTERMEDIATE</Dropdown.Item>
+                                        <Dropdown.Item href="#/action-4">ADVANCED</Dropdown.Item>
+                                        <Dropdown.Item href="#/action-5">MASTER</Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="2">
+                          <Accordion.Header>BALANCE AND COORDINATION</Accordion.Header>
+                          <Accordion.Body>
+                            <div className="goals-grid">
+                              {BALANCE_AND_COORDINATION.map((goal, idx) => (
+                                <div key={idx} className="goal-item">
+                                    <div className="goal-row" style={{position:"relative"}}>
+                                        <Form.Label className="goal-label">{goal.name}</Form.Label>
+                                        <Dropdown style={{position:"absolute", right:"0"}}>
+                                          <Dropdown.Toggle variant="success" id={`dropdown-${idx}`}>
+                                            Achievement Level
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                            <Dropdown.Item href="#/action-1">NOT STARTED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-2">BEGINNER</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-3">INTERMEDIATE</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-4">ADVANCED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-5">MASTER</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                              ))}
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="3">
+                          <Accordion.Header>SOCIAL INTERACTION</Accordion.Header>
+                          <Accordion.Body>
+                            <div className="goals-grid">
+                              {SOCIAL_INTERACTION.map((goal, idx) => (
+                                <div key={idx} className="goal-item">
+                                    <div className="goal-row" style={{position:"relative"}}>
+                                        <Form.Label className="goal-label">{goal.name}</Form.Label>
+                                        <Dropdown style={{position:"absolute", right:"0"}}>
+                                          <Dropdown.Toggle variant="success" id={`dropdown-${idx}`}>
+                                            Achievement Level
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                            <Dropdown.Item href="#/action-1">NOT STARTED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-2">BEGINNER</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-3">INTERMEDIATE</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-4">ADVANCED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-5">MASTER</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                              ))}
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="4">
+                          <Accordion.Header>ADL</Accordion.Header>
+                          <Accordion.Body>
+                            <div className="goals-grid">
+                              {ADL.map((goal, idx) => (
+                                <div key={idx} className="goal-item">
+                                    <div className="goal-row" style={{position:"relative"}}>
+                                        <Form.Label className="goal-label">{goal.name}</Form.Label>
+                                        <Dropdown style={{position:"absolute", right:"0"}}>
+                                          <Dropdown.Toggle variant="success" id={`dropdown-${idx}`}>
+                                            Achievement Level
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                            <Dropdown.Item href="#/action-1">NOT STARTED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-2">BEGINNER</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-3">INTERMEDIATE</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-4">ADVANCED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-5">MASTER</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                              ))}
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="5">
+                          <Accordion.Header>PLAY SKILL</Accordion.Header>
+                          <Accordion.Body>
+                            <div className="goals-grid">
+                              {PLAY_SKILL.map((goal, idx) => (
+                                <div key={idx} className="goal-item">
+                                    <div className="goal-row" style={{position:"relative"}}>
+                                        <Form.Label className="goal-label">{goal.name}</Form.Label>
+                                        <Dropdown style={{position:"absolute", right:"0"}}>
+                                          <Dropdown.Toggle variant="success" id={`dropdown-${idx}`}>
+                                            Achievement Level
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                            <Dropdown.Item href="#/action-1">NOT STARTED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-2">BEGINNER</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-3">INTERMEDIATE</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-4">ADVANCED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-5">MASTER</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                              ))}
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="6">
+                          <Accordion.Header>BRAIN GYM</Accordion.Header>
+                          <Accordion.Body>
+                            <div className="goals-grid">
+                              {BRAIN_GYM.map((goal, idx) => (
+                                <div key={idx} className="goal-item">
+                                    <div className="goal-row" style={{position:"relative"}}>
+                                        <Form.Label className="goal-label">{goal.name}</Form.Label>
+                                        <Dropdown style={{position:"absolute", right:"0"}}>
+                                          <Dropdown.Toggle variant="success" id={`dropdown-${idx}`}>
+                                            Achievement Level
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                            <Dropdown.Item href="#/action-1">NOT STARTED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-2">BEGINNER</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-3">INTERMEDIATE</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-4">ADVANCED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-5">MASTER</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                              ))}
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="7">
+                          <Accordion.Header>HIGHER FUNCTIONING</Accordion.Header>
+                          <Accordion.Body>
+                            <div className="goals-grid">
+                              {HIGHER_FUNCTIONING.map((goal, idx) => (
+                                <div key={idx} className="goal-item">
+                                    <div className="goal-row" style={{position:"relative"}}>
+                                        <Form.Label className="goal-label">{goal.name}</Form.Label>
+                                        <Dropdown style={{position:"absolute", right:"0"}}>
+                                          <Dropdown.Toggle variant="success" id={`dropdown-${idx}`}>
+                                            Achievement Level
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                            <Dropdown.Item href="#/action-1">NOT STARTED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-2">BEGINNER</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-3">INTERMEDIATE</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-4">ADVANCED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-5">MASTER</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                              ))}
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="8">
+                          <Accordion.Header>BILATERAL INTEGRATION</Accordion.Header>
+                          <Accordion.Body>
+                            <div className="goals-grid">
+                              {BILATERAL_INTEGRATION.map((goal, idx) => (
+                                <div key={idx} className="goal-item">
+                                    <div className="goal-row" style={{position:"relative"}}>
+                                        <Form.Label className="goal-label">{goal.name}</Form.Label>
+                                        <Dropdown style={{position:"absolute", right:"0"}}>
+                                          <Dropdown.Toggle variant="success" id={`dropdown-${idx}`}>
+                                            Achievement Level
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                            <Dropdown.Item href="#/action-1">NOT STARTED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-2">BEGINNER</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-3">INTERMEDIATE</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-4">ADVANCED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-5">MASTER</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                              ))}
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
+                        <Accordion.Item eventKey="9">
+                          <Accordion.Header>SENSORY INTEGRATION</Accordion.Header>
+                          <Accordion.Body>
+                            <div className="goals-grid">
+                              {SENSORY_INTEGRATION.map((goal, idx) => (
+                                <div key={idx} className="goal-item">
+                                    <div className="goal-row" style={{position:"relative"}}>
+                                        <Form.Label className="goal-label">{goal.name}</Form.Label>
+                                        <Dropdown style={{position:"absolute", right:"0"}}>
+                                          <Dropdown.Toggle variant="success" id={`dropdown-${idx}`}>
+                                            Achievement Level
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                            <Dropdown.Item href="#/action-1">NOT STARTED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-2">BEGINNER</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-3">INTERMEDIATE</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-4">ADVANCED</Dropdown.Item>
+                                            <Dropdown.Item href="#/action-5">MASTER</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                              ))}
+                            </div>
+                          </Accordion.Body>
+                        </Accordion.Item>
                     </Accordion>
                 </Card.Body>
             </Card>

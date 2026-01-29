@@ -317,3 +317,39 @@
     padding: 3px;
   }
 }
+
+/* Grid layout to show two goals per row */
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.goal-item {
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .goals-grid {
+    grid-template-columns: 1fr; /* collapse to single column on smaller screens */
+  }
+
+  .goal-label {
+    min-width: 0; /* allow label to wrap on small screens */
+  }
+}
+
+/* Inline layout for goal label + dropdown */
+.goal-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* space between label and dropdown */
+  margin-bottom: 0.5rem;
+}
+
+.goal-label {
+  min-width: 200px; /* adjust as needed for label width */
+  margin-bottom: 0; /* override default label spacing */
+}
