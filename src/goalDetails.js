@@ -1,4 +1,4 @@
-export const goalDetails = [
+export const goalData = [
   {
     "area": "NONE",
     "description": "",

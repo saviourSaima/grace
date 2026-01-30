@@ -1,4 +1,4 @@
-export const childDetails = [
+export const childData = [
         {
           "id": "0ea88095-cceb-4b3d-8ead-288b5cd76a37",
           "achievements": [
