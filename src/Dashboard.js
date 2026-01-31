@@ -21,7 +21,7 @@ const Dashboard = () => {
 
         // Fetch child details
         try {
-          const childResponse = await fetch("/api/children", {
+          const childResponse = await fetch("http://16.145.70.192:8080/api/children", {
             cache: "no-store"
           });
 
@@ -35,7 +35,7 @@ const Dashboard = () => {
 
         // Fetch goal details
         try {
-          const goalsResponse = await fetch('/api/goals', {
+          const goalsResponse = await fetch('http://16.145.70.192:8080/api/goals', {
             cache: "no-store"
           });
           if (!goalsResponse.ok) throw new Error('Failed to fetch goal details');

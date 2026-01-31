@@ -1,6 +1,5 @@
 {
   "name": "react-dashboard",
-  "proxy": "http://16.145.70.192:8080",
   "version": "1.0.0",
   "private": true,
   "homepage": "./",
