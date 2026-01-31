@@ -21,7 +21,7 @@ const Dashboard = () => {
 
         // Fetch child details
         try {
-          const childResponse = await fetch('http://localhost:3001/api/children');
+          const childResponse = await fetch('/api/children');
           if (!childResponse.ok) throw new Error('Failed to fetch child details');
           const childDataApi = await childResponse.json();
           setChildDetails(childDataApi);
@@ -32,7 +32,7 @@ const Dashboard = () => {
 
         // Fetch goal details
         try {
-          const goalsResponse = await fetch('http://localhost:3001/api/goals');
+          const goalsResponse = await fetch('/api/goals');
           if (!goalsResponse.ok) throw new Error('Failed to fetch goal details');
           const goalsDataApi = await goalsResponse.json();
           setGoalDetails(goalsDataApi);
