@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Form, Dropdown, Accordion, Card, Container } from 'react-bootstrap';
 import './Dashboard.css';
-import {childData}  from './childData';
-import {goalData}  from './goalDetails';
+import { childData } from './childData';
+import { goalData } from './goalDetails';
 
 const Dashboard = () => {
   const [searchInput, setSearchInput] = useState('');
@@ -21,7 +21,10 @@ const Dashboard = () => {
 
         // Fetch child details
         try {
-          const childResponse = await fetch('/api/children');
+          const childResponse = await fetch("/api/children", {
+            cache: "no-store"
+          });
+
           if (!childResponse.ok) throw new Error('Failed to fetch child details');
           const childDataApi = await childResponse.json();
           setChildDetails(childDataApi);
@@ -32,7 +35,9 @@ const Dashboard = () => {
 
         // Fetch goal details
         try {
-          const goalsResponse = await fetch('/api/goals');
+          const goalsResponse = await fetch('/api/goals', {
+            cache: "no-store"
+          });
           if (!goalsResponse.ok) throw new Error('Failed to fetch goal details');
           const goalsDataApi = await goalsResponse.json();
           setGoalDetails(goalsDataApi);
@@ -130,501 +135,501 @@ const Dashboard = () => {
 
         {!loading && !error && (
           <>
-      <Card className="dashboard-card">
-        <Card.Body>
-          <Form>
-            <Form.Group className="mb-3 responsive-form-group">
-              <Form.Label>Child Name :</Form.Label>
-              <div className="responsive-input-wrapper">
-                <Form.Control
-                  type="text"
-                  placeholder="Search child name"
-                  value={searchInput}
-                  onChange={(e) => {
-                    setSearchInput(e.target.value);
-                    setSelectedChild(null);
-                  }}
-                />
-                {shouldShowSuggestions && (
-                  <div className="suggestions">
-                    {filteredChildren.map((child, idx) => (
-                      <div key={idx} onClick={() => handleChildSelect(child)} className="suggestion-item">
-                        {child.firstName}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {searchInput && !selectedChild && filteredChildren.length === 0 && (
-                  <div className="suggestions">
-                    <div onClick={handleAddNewChild} className="suggestion-item" style={{ fontWeight: 'bold', color: '#007bff' }}>
-                      + Add new child: {searchInput}
+            <Card className="dashboard-card">
+              <Card.Body>
+                <Form>
+                  <Form.Group className="mb-3 responsive-form-group">
+                    <Form.Label>Child Name :</Form.Label>
+                    <div className="responsive-input-wrapper">
+                      <Form.Control
+                        type="text"
+                        placeholder="Search child name"
+                        value={searchInput}
+                        onChange={(e) => {
+                          setSearchInput(e.target.value);
+                          setSelectedChild(null);
+                        }}
+                      />
+                      {shouldShowSuggestions && (
+                        <div className="suggestions">
+                          {filteredChildren.map((child, idx) => (
+                            <div key={idx} onClick={() => handleChildSelect(child)} className="suggestion-item">
+                              {child.firstName}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {searchInput && !selectedChild && filteredChildren.length === 0 && (
+                        <div className="suggestions">
+                          <div onClick={handleAddNewChild} className="suggestion-item" style={{ fontWeight: 'bold', color: '#007bff' }}>
+                            + Add new child: {searchInput}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                )}
-              </div>
-              <Form.Label>Age :</Form.Label>
-              <Form.Control
-                className="responsive-age-input"
-                type="text"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                disabled={selectedChild !== null}
-                placeholder={selectedChild ? 'Auto-calculated' : 'Enter age'}
-              />
-            </Form.Group>
-          </Form>
-        </Card.Body>
-      </Card>
+                    <Form.Label>Age :</Form.Label>
+                    <Form.Control
+                      className="responsive-age-input"
+                      type="text"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      disabled={selectedChild !== null}
+                      placeholder={selectedChild ? 'Auto-calculated' : 'Enter age'}
+                    />
+                  </Form.Group>
+                </Form>
+              </Card.Body>
+            </Card>
 
-      <Card className="dashboard-card">
-        <Card.Header>
-          <h5>Assesments</h5>
-        </Card.Header>
-        <Card.Body>
-          <Accordion alwaysOpen>
-            <Accordion.Item eventKey="0">
-              <Accordion.Header>GROSS MOTOR</Accordion.Header>
-              <Accordion.Body>
-                <div className="goals-grid">
-                  <Accordion alwaysOpen>
-                    {AGE_RANGES.map(({ min, max, label }) => {
-                      const goalsForRange = GROSS_MOTOR.filter(
-                        goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
-                      );
-                      if (!goalsForRange.length) return null;
-                      return (
-                        <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
-                          <Accordion.Header>{label}</Accordion.Header>
-                          <Accordion.Body>
-                            {goalsForRange.map((goal, idx) => (
-                              <div key={idx} className="goal-row" style={{ position: "relative" }}>
-                                <Form.Label className="goal-label">
-                                  {goal.name}
-                                </Form.Label>
-                                <Dropdown style={{ position: "absolute", right: 0 }}>
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id={`dropdown-${min}-${idx}`}
-                                  >
-                                    Achievement Level
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                    <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                    <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                    <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                    <Dropdown.Item>MASTER</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            ))}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="1">
-              <Accordion.Header>FINE MOTOR</Accordion.Header>
-              <Accordion.Body>
-                <div className="goals-grid">
-                  <Accordion alwaysOpen>
-                    {AGE_RANGES.map(({ min, max, label }) => {
-                      const goalsForRange = FINE_MOTOR.filter(
-                        goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
-                      );
-                      if (!goalsForRange.length) return null;
-                      return (
-                        <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
-                          <Accordion.Header>{label}</Accordion.Header>
-                          <Accordion.Body>
-                            {goalsForRange.map((goal, idx) => (
-                              <div key={idx} className="goal-row" style={{ position: "relative" }}>
-                                <Form.Label className="goal-label">
-                                  {goal.name}
-                                </Form.Label>
-                                <Dropdown style={{ position: "absolute", right: 0 }}>
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id={`dropdown-${min}-${idx}`}
-                                  >
-                                    Achievement Level
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                    <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                    <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                    <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                    <Dropdown.Item>MASTER</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            ))}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="2">
-              <Accordion.Header>BALANCE AND COORDINATION</Accordion.Header>
-              <Accordion.Body>
-                <div className="goals-grid">
-                  <Accordion alwaysOpen>
-                    {AGE_RANGES.map(({ min, max, label }) => {
-                      const goalsForRange = BALANCE_AND_COORDINATION.filter(
-                        goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
-                      );
-                      if (!goalsForRange.length) return null;
-                      return (
-                        <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
-                          <Accordion.Header>{label}</Accordion.Header>
-                          <Accordion.Body>
-                            {goalsForRange.map((goal, idx) => (
-                              <div key={idx} className="goal-row" style={{ position: "relative" }}>
-                                <Form.Label className="goal-label">
-                                  {goal.name}
-                                </Form.Label>
-                                <Dropdown style={{ position: "absolute", right: 0 }}>
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id={`dropdown-${min}-${idx}`}
-                                  >
-                                    Achievement Level
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                    <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                    <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                    <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                    <Dropdown.Item>MASTER</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            ))}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="3">
-              <Accordion.Header>SOCIAL INTERACTION</Accordion.Header>
-              <Accordion.Body>
-                <div className="goals-grid">
-                  <Accordion alwaysOpen>
-                    {AGE_RANGES.map(({ min, max, label }) => {
-                      const goalsForRange = SOCIAL_INTERACTION.filter(
-                        goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
-                      );
-                      if (!goalsForRange.length) return null;
-                      return (
-                        <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
-                          <Accordion.Header>{label}</Accordion.Header>
-                          <Accordion.Body>
-                            {goalsForRange.map((goal, idx) => (
-                              <div key={idx} className="goal-row" style={{ position: "relative" }}>
-                                <Form.Label className="goal-label">
-                                  {goal.name}
-                                </Form.Label>
-                                <Dropdown style={{ position: "absolute", right: 0 }}>
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id={`dropdown-${min}-${idx}`}
-                                  >
-                                    Achievement Level
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                    <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                    <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                    <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                    <Dropdown.Item>MASTER</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            ))}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="4">
-              <Accordion.Header>ADL</Accordion.Header>
-              <Accordion.Body>
-                <div className="goals-grid">
-                  <Accordion alwaysOpen>
-                    {AGE_RANGES.map(({ min, max, label }) => {
-                      const goalsForRange = ADL.filter(
-                        goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
-                      );
-                      if (!goalsForRange.length) return null;
-                      return (
-                        <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
-                          <Accordion.Header>{label}</Accordion.Header>
-                          <Accordion.Body>
-                            {goalsForRange.map((goal, idx) => (
-                              <div key={idx} className="goal-row" style={{ position: "relative" }}>
-                                <Form.Label className="goal-label">
-                                  {goal.name}
-                                </Form.Label>
-                                <Dropdown style={{ position: "absolute", right: 0 }}>
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id={`dropdown-${min}-${idx}`}
-                                  >
-                                    Achievement Level
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                    <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                    <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                    <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                    <Dropdown.Item>MASTER</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            ))}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="5">
-              <Accordion.Header>PLAY SKILL</Accordion.Header>
-              <Accordion.Body>
-                <div className="goals-grid">
-                  <Accordion alwaysOpen>
-                    {AGE_RANGES.map(({ min, max, label }) => {
-                      const goalsForRange = PLAY_SKILL.filter(
-                        goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
-                      );
-                      if (!goalsForRange.length) return null;
-                      return (
-                        <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
-                          <Accordion.Header>{label}</Accordion.Header>
-                          <Accordion.Body>
-                            {goalsForRange.map((goal, idx) => (
-                              <div key={idx} className="goal-row" style={{ position: "relative" }}>
-                                <Form.Label className="goal-label">
-                                  {goal.name}
-                                </Form.Label>
-                                <Dropdown style={{ position: "absolute", right: 0 }}>
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id={`dropdown-${min}-${idx}`}
-                                  >
-                                    Achievement Level
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                    <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                    <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                    <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                    <Dropdown.Item>MASTER</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            ))}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="6">
-              <Accordion.Header>BRAIN GYM</Accordion.Header>
-              <Accordion.Body>
-                <div className="goals-grid">
-                  <Accordion alwaysOpen>
-                    {AGE_RANGES.map(({ min, max, label }) => {
-                      const goalsForRange = BRAIN_GYM.filter(
-                        goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
-                      );
-                      if (!goalsForRange.length) return null;
-                      return (
-                        <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
-                          <Accordion.Header>{label}</Accordion.Header>
-                          <Accordion.Body>
-                            {goalsForRange.map((goal, idx) => (
-                              <div key={idx} className="goal-row" style={{ position: "relative" }}>
-                                <Form.Label className="goal-label">
-                                  {goal.name}
-                                </Form.Label>
-                                <Dropdown style={{ position: "absolute", right: 0 }}>
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id={`dropdown-${min}-${idx}`}
-                                  >
-                                    Achievement Level
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                    <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                    <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                    <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                    <Dropdown.Item>MASTER</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            ))}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="7">
-              <Accordion.Header>HIGHER FUNCTIONING</Accordion.Header>
-              <Accordion.Body>
-                <div className="goals-grid">
-                  <Accordion alwaysOpen>
-                    {AGE_RANGES.map(({ min, max, label }) => {
-                      const goalsForRange = HIGHER_FUNCTIONING.filter(
-                        goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
-                      );
-                      if (!goalsForRange.length) return null;
-                      return (
-                        <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
-                          <Accordion.Header>{label}</Accordion.Header>
-                          <Accordion.Body>
-                            {goalsForRange.map((goal, idx) => (
-                              <div key={idx} className="goal-row" style={{ position: "relative" }}>
-                                <Form.Label className="goal-label">
-                                  {goal.name}
-                                </Form.Label>
-                                <Dropdown style={{ position: "absolute", right: 0 }}>
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id={`dropdown-${min}-${idx}`}
-                                  >
-                                    Achievement Level
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                    <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                    <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                    <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                    <Dropdown.Item>MASTER</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            ))}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="8">
-              <Accordion.Header>BILATERAL INTEGRATION</Accordion.Header>
-              <Accordion.Body>
-                <div className="goals-grid">
-                  <Accordion alwaysOpen>
-                    {AGE_RANGES.map(({ min, max, label }) => {
-                      const goalsForRange = BILATERAL_INTEGRATION.filter(
-                        goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
-                      );
-                      if (!goalsForRange.length) return null;
-                      return (
-                        <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
-                          <Accordion.Header>{label}</Accordion.Header>
-                          <Accordion.Body>
-                            {goalsForRange.map((goal, idx) => (
-                              <div key={idx} className="goal-row" style={{ position: "relative" }}>
-                                <Form.Label className="goal-label">
-                                  {goal.name}
-                                </Form.Label>
-                                <Dropdown style={{ position: "absolute", right: 0 }}>
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id={`dropdown-${min}-${idx}`}
-                                  >
-                                    Achievement Level
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                    <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                    <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                    <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                    <Dropdown.Item>MASTER</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            ))}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="9">
-              <Accordion.Header>SENSORY INTEGRATION</Accordion.Header>
-              <Accordion.Body>
-                <div className="goals-grid">
-                  <Accordion alwaysOpen>
-                    {AGE_RANGES.map(({ min, max, label }) => {
-                      const goalsForRange = SENSORY_INTEGRATION.filter(
-                        goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
-                      );
-                      if (!goalsForRange.length) return null;
-                      return (
-                        <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
-                          <Accordion.Header>{label}</Accordion.Header>
-                          <Accordion.Body>
-                            {goalsForRange.map((goal, idx) => (
-                              <div key={idx} className="goal-row" style={{ position: "relative" }}>
-                                <Form.Label className="goal-label">
-                                  {goal.name}
-                                </Form.Label>
-                                <Dropdown style={{ position: "absolute", right: 0 }}>
-                                  <Dropdown.Toggle
-                                    variant="success"
-                                    id={`dropdown-${min}-${idx}`}
-                                  >
-                                    Achievement Level
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                    <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                    <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                    <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                    <Dropdown.Item>MASTER</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                              </div>
-                            ))}
-                          </Accordion.Body>
-                        </Accordion.Item>
-                      );
-                    })}
-                  </Accordion>
-                </div>
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-        </Card.Body>
-      </Card>
+            <Card className="dashboard-card">
+              <Card.Header>
+                <h5>Assesments</h5>
+              </Card.Header>
+              <Card.Body>
+                <Accordion alwaysOpen>
+                  <Accordion.Item eventKey="0">
+                    <Accordion.Header>GROSS MOTOR</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="goals-grid">
+                        <Accordion alwaysOpen>
+                          {AGE_RANGES.map(({ min, max, label }) => {
+                            const goalsForRange = GROSS_MOTOR.filter(
+                              goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
+                            );
+                            if (!goalsForRange.length) return null;
+                            return (
+                              <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
+                                <Accordion.Header>{label}</Accordion.Header>
+                                <Accordion.Body>
+                                  {goalsForRange.map((goal, idx) => (
+                                    <div key={idx} className="goal-row" style={{ position: "relative" }}>
+                                      <Form.Label className="goal-label">
+                                        {goal.name}
+                                      </Form.Label>
+                                      <Dropdown style={{ position: "absolute", right: 0 }}>
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id={`dropdown-${min}-${idx}`}
+                                        >
+                                          Achievement Level
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
+                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
+                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
+                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
+                                          <Dropdown.Item>MASTER</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  ))}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="1">
+                    <Accordion.Header>FINE MOTOR</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="goals-grid">
+                        <Accordion alwaysOpen>
+                          {AGE_RANGES.map(({ min, max, label }) => {
+                            const goalsForRange = FINE_MOTOR.filter(
+                              goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
+                            );
+                            if (!goalsForRange.length) return null;
+                            return (
+                              <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
+                                <Accordion.Header>{label}</Accordion.Header>
+                                <Accordion.Body>
+                                  {goalsForRange.map((goal, idx) => (
+                                    <div key={idx} className="goal-row" style={{ position: "relative" }}>
+                                      <Form.Label className="goal-label">
+                                        {goal.name}
+                                      </Form.Label>
+                                      <Dropdown style={{ position: "absolute", right: 0 }}>
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id={`dropdown-${min}-${idx}`}
+                                        >
+                                          Achievement Level
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
+                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
+                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
+                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
+                                          <Dropdown.Item>MASTER</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  ))}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="2">
+                    <Accordion.Header>BALANCE AND COORDINATION</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="goals-grid">
+                        <Accordion alwaysOpen>
+                          {AGE_RANGES.map(({ min, max, label }) => {
+                            const goalsForRange = BALANCE_AND_COORDINATION.filter(
+                              goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
+                            );
+                            if (!goalsForRange.length) return null;
+                            return (
+                              <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
+                                <Accordion.Header>{label}</Accordion.Header>
+                                <Accordion.Body>
+                                  {goalsForRange.map((goal, idx) => (
+                                    <div key={idx} className="goal-row" style={{ position: "relative" }}>
+                                      <Form.Label className="goal-label">
+                                        {goal.name}
+                                      </Form.Label>
+                                      <Dropdown style={{ position: "absolute", right: 0 }}>
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id={`dropdown-${min}-${idx}`}
+                                        >
+                                          Achievement Level
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
+                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
+                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
+                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
+                                          <Dropdown.Item>MASTER</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  ))}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="3">
+                    <Accordion.Header>SOCIAL INTERACTION</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="goals-grid">
+                        <Accordion alwaysOpen>
+                          {AGE_RANGES.map(({ min, max, label }) => {
+                            const goalsForRange = SOCIAL_INTERACTION.filter(
+                              goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
+                            );
+                            if (!goalsForRange.length) return null;
+                            return (
+                              <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
+                                <Accordion.Header>{label}</Accordion.Header>
+                                <Accordion.Body>
+                                  {goalsForRange.map((goal, idx) => (
+                                    <div key={idx} className="goal-row" style={{ position: "relative" }}>
+                                      <Form.Label className="goal-label">
+                                        {goal.name}
+                                      </Form.Label>
+                                      <Dropdown style={{ position: "absolute", right: 0 }}>
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id={`dropdown-${min}-${idx}`}
+                                        >
+                                          Achievement Level
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
+                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
+                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
+                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
+                                          <Dropdown.Item>MASTER</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  ))}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="4">
+                    <Accordion.Header>ADL</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="goals-grid">
+                        <Accordion alwaysOpen>
+                          {AGE_RANGES.map(({ min, max, label }) => {
+                            const goalsForRange = ADL.filter(
+                              goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
+                            );
+                            if (!goalsForRange.length) return null;
+                            return (
+                              <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
+                                <Accordion.Header>{label}</Accordion.Header>
+                                <Accordion.Body>
+                                  {goalsForRange.map((goal, idx) => (
+                                    <div key={idx} className="goal-row" style={{ position: "relative" }}>
+                                      <Form.Label className="goal-label">
+                                        {goal.name}
+                                      </Form.Label>
+                                      <Dropdown style={{ position: "absolute", right: 0 }}>
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id={`dropdown-${min}-${idx}`}
+                                        >
+                                          Achievement Level
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
+                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
+                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
+                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
+                                          <Dropdown.Item>MASTER</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  ))}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="5">
+                    <Accordion.Header>PLAY SKILL</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="goals-grid">
+                        <Accordion alwaysOpen>
+                          {AGE_RANGES.map(({ min, max, label }) => {
+                            const goalsForRange = PLAY_SKILL.filter(
+                              goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
+                            );
+                            if (!goalsForRange.length) return null;
+                            return (
+                              <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
+                                <Accordion.Header>{label}</Accordion.Header>
+                                <Accordion.Body>
+                                  {goalsForRange.map((goal, idx) => (
+                                    <div key={idx} className="goal-row" style={{ position: "relative" }}>
+                                      <Form.Label className="goal-label">
+                                        {goal.name}
+                                      </Form.Label>
+                                      <Dropdown style={{ position: "absolute", right: 0 }}>
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id={`dropdown-${min}-${idx}`}
+                                        >
+                                          Achievement Level
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
+                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
+                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
+                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
+                                          <Dropdown.Item>MASTER</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  ))}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="6">
+                    <Accordion.Header>BRAIN GYM</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="goals-grid">
+                        <Accordion alwaysOpen>
+                          {AGE_RANGES.map(({ min, max, label }) => {
+                            const goalsForRange = BRAIN_GYM.filter(
+                              goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
+                            );
+                            if (!goalsForRange.length) return null;
+                            return (
+                              <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
+                                <Accordion.Header>{label}</Accordion.Header>
+                                <Accordion.Body>
+                                  {goalsForRange.map((goal, idx) => (
+                                    <div key={idx} className="goal-row" style={{ position: "relative" }}>
+                                      <Form.Label className="goal-label">
+                                        {goal.name}
+                                      </Form.Label>
+                                      <Dropdown style={{ position: "absolute", right: 0 }}>
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id={`dropdown-${min}-${idx}`}
+                                        >
+                                          Achievement Level
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
+                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
+                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
+                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
+                                          <Dropdown.Item>MASTER</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  ))}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="7">
+                    <Accordion.Header>HIGHER FUNCTIONING</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="goals-grid">
+                        <Accordion alwaysOpen>
+                          {AGE_RANGES.map(({ min, max, label }) => {
+                            const goalsForRange = HIGHER_FUNCTIONING.filter(
+                              goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
+                            );
+                            if (!goalsForRange.length) return null;
+                            return (
+                              <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
+                                <Accordion.Header>{label}</Accordion.Header>
+                                <Accordion.Body>
+                                  {goalsForRange.map((goal, idx) => (
+                                    <div key={idx} className="goal-row" style={{ position: "relative" }}>
+                                      <Form.Label className="goal-label">
+                                        {goal.name}
+                                      </Form.Label>
+                                      <Dropdown style={{ position: "absolute", right: 0 }}>
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id={`dropdown-${min}-${idx}`}
+                                        >
+                                          Achievement Level
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
+                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
+                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
+                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
+                                          <Dropdown.Item>MASTER</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  ))}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="8">
+                    <Accordion.Header>BILATERAL INTEGRATION</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="goals-grid">
+                        <Accordion alwaysOpen>
+                          {AGE_RANGES.map(({ min, max, label }) => {
+                            const goalsForRange = BILATERAL_INTEGRATION.filter(
+                              goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
+                            );
+                            if (!goalsForRange.length) return null;
+                            return (
+                              <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
+                                <Accordion.Header>{label}</Accordion.Header>
+                                <Accordion.Body>
+                                  {goalsForRange.map((goal, idx) => (
+                                    <div key={idx} className="goal-row" style={{ position: "relative" }}>
+                                      <Form.Label className="goal-label">
+                                        {goal.name}
+                                      </Form.Label>
+                                      <Dropdown style={{ position: "absolute", right: 0 }}>
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id={`dropdown-${min}-${idx}`}
+                                        >
+                                          Achievement Level
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
+                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
+                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
+                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
+                                          <Dropdown.Item>MASTER</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  ))}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="9">
+                    <Accordion.Header>SENSORY INTEGRATION</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="goals-grid">
+                        <Accordion alwaysOpen>
+                          {AGE_RANGES.map(({ min, max, label }) => {
+                            const goalsForRange = SENSORY_INTEGRATION.filter(
+                              goal => goal.minAgeMonths === min && goal.maxAgeMonths === max
+                            );
+                            if (!goalsForRange.length) return null;
+                            return (
+                              <Accordion.Item eventKey={`${min}-${max}`} key={`${min}-${max}`}>
+                                <Accordion.Header>{label}</Accordion.Header>
+                                <Accordion.Body>
+                                  {goalsForRange.map((goal, idx) => (
+                                    <div key={idx} className="goal-row" style={{ position: "relative" }}>
+                                      <Form.Label className="goal-label">
+                                        {goal.name}
+                                      </Form.Label>
+                                      <Dropdown style={{ position: "absolute", right: 0 }}>
+                                        <Dropdown.Toggle
+                                          variant="success"
+                                          id={`dropdown-${min}-${idx}`}
+                                        >
+                                          Achievement Level
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
+                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
+                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
+                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
+                                          <Dropdown.Item>MASTER</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+                                    </div>
+                                  ))}
+                                </Accordion.Body>
+                              </Accordion.Item>
+                            );
+                          })}
+                        </Accordion>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
+              </Card.Body>
+            </Card>
           </>
         )}
       </Container>
