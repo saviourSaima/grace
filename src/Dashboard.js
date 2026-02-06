@@ -70,9 +70,11 @@ const Dashboard = () => {
     return calculatedAge;
   };
 
+  const getFullName = (child) => [child.firstName, child.lastName].filter(Boolean).join(' ');
+
   const handleChildSelect = (child) => {
     setSelectedChild(child);
-    setSearchInput(child.firstName);
+    setSearchInput(getFullName(child));
     setAge(calculateAge(child.dateOfBirth).toString());
   };
 
@@ -82,8 +84,69 @@ const Dashboard = () => {
     setAge('');
   };
 
-  const filteredChildren = childDetails.filter(child => new RegExp(searchInput, 'i').test(child.firstName));
+  const filteredChildren = childDetails.filter(child => new RegExp(searchInput, 'i').test(getFullName(child)));
   const shouldShowSuggestions = searchInput && !selectedChild && filteredChildren.length > 0;
+  const [achievementsMap, setAchievementsMap] = useState({});
+
+  useEffect(() => {
+    if (!selectedChild) {
+      setAchievementsMap({});
+      return;
+    }
+
+    const sourceChild = selectedChild.achievements && selectedChild.achievements.length
+      ? selectedChild
+      : (childData.find(c => c.id === selectedChild.id) || {});
+
+    const sourceAchievements = sourceChild.achievements || [];
+    const map = {};
+    sourceAchievements.forEach(a => {
+      if (a && a.goal && a.goal.id) map[a.goal.id] = a.level || 'NOT_STARTED';
+    });
+    setAchievementsMap(map);
+  }, [selectedChild]);
+
+  const handleSetGoalLevel = (goalId, level) => {
+    setAchievementsMap(prev => ({ ...prev, [goalId]: level }));
+    if (!selectedChild) return;
+
+    const existing = (selectedChild.achievements || []).findIndex(a => a.goal && a.goal.id === goalId);
+    const updated = [...(selectedChild.achievements || [])];
+    const now = new Date().toISOString();
+
+    if (existing >= 0) {
+      updated[existing] = { ...updated[existing], level, lastUpdatedAt: now };
+    } else {
+      updated.push({
+        id: `local-${Math.random().toString(36).slice(2)}`,
+        child: selectedChild.id,
+        goal: { id: goalId },
+        lastUpdatedAt: now,
+        lastUpdatedBy: null,
+        level,
+        notes: ''
+      });
+    }
+
+    setSelectedChild({ ...selectedChild, achievements: updated });
+  };
+
+  const AchievementDropdown = ({ goal, idSuffix }) => {
+    const level = achievementsMap[goal.id] || null;
+    const choices = ['NOT_STARTED', 'BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'MASTER'];
+    return (
+      <Dropdown style={{ position: "absolute", right: 0 }}>
+        <Dropdown.Toggle variant="success" id={`dropdown-${idSuffix}`}>
+          {level || 'Achievement Level'}
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          {choices.map(c => (
+            <Dropdown.Item key={c} active={level === c} onClick={() => handleSetGoalLevel(goal.id, c)}>{c}</Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown>
+    );
+  };
   const GROSS_MOTOR = goalDetails.filter((goal) => goal.domain === "GROSS_MOTOR");
   const FINE_MOTOR = goalDetails.filter((goal) => goal.domain === "FINE_MOTOR");
   const BALANCE_AND_COORDINATION = goalDetails.filter((goal) => goal.domain === "BALANCE_AND_COORDINATION");
@@ -147,14 +210,13 @@ const Dashboard = () => {
                         value={searchInput}
                         onChange={(e) => {
                           setSearchInput(e.target.value);
-                          setSelectedChild(null);
-                        }}
+                          setSelectedChild(null);                        }}
                       />
                       {shouldShowSuggestions && (
                         <div className="suggestions">
                           {filteredChildren.map((child, idx) => (
                             <div key={idx} onClick={() => handleChildSelect(child)} className="suggestion-item">
-                              {child.firstName}
+                              {getFullName(child)}
                             </div>
                           ))}
                         </div>
@@ -206,21 +268,7 @@ const Dashboard = () => {
                                       <Form.Label className="goal-label">
                                         {goal.name}
                                       </Form.Label>
-                                      <Dropdown style={{ position: "absolute", right: 0 }}>
-                                        <Dropdown.Toggle
-                                          variant="success"
-                                          id={`dropdown-${min}-${idx}`}
-                                        >
-                                          Achievement Level
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                          <Dropdown.Item>MASTER</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
+                                      <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                     </div>
                                   ))}
                                 </Accordion.Body>
@@ -250,21 +298,7 @@ const Dashboard = () => {
                                       <Form.Label className="goal-label">
                                         {goal.name}
                                       </Form.Label>
-                                      <Dropdown style={{ position: "absolute", right: 0 }}>
-                                        <Dropdown.Toggle
-                                          variant="success"
-                                          id={`dropdown-${min}-${idx}`}
-                                        >
-                                          Achievement Level
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                          <Dropdown.Item>MASTER</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
+                                      <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                     </div>
                                   ))}
                                 </Accordion.Body>
@@ -294,21 +328,7 @@ const Dashboard = () => {
                                       <Form.Label className="goal-label">
                                         {goal.name}
                                       </Form.Label>
-                                      <Dropdown style={{ position: "absolute", right: 0 }}>
-                                        <Dropdown.Toggle
-                                          variant="success"
-                                          id={`dropdown-${min}-${idx}`}
-                                        >
-                                          Achievement Level
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                          <Dropdown.Item>MASTER</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
+                                      <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                     </div>
                                   ))}
                                 </Accordion.Body>
@@ -338,21 +358,7 @@ const Dashboard = () => {
                                       <Form.Label className="goal-label">
                                         {goal.name}
                                       </Form.Label>
-                                      <Dropdown style={{ position: "absolute", right: 0 }}>
-                                        <Dropdown.Toggle
-                                          variant="success"
-                                          id={`dropdown-${min}-${idx}`}
-                                        >
-                                          Achievement Level
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                          <Dropdown.Item>MASTER</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
+                                      <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                     </div>
                                   ))}
                                 </Accordion.Body>
@@ -387,21 +393,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -431,21 +423,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -475,21 +453,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -519,21 +483,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -563,21 +513,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -607,21 +543,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -655,21 +577,7 @@ const Dashboard = () => {
                                       <Form.Label className="goal-label">
                                         {goal.name}
                                       </Form.Label>
-                                      <Dropdown style={{ position: "absolute", right: 0 }}>
-                                        <Dropdown.Toggle
-                                          variant="success"
-                                          id={`dropdown-${min}-${idx}`}
-                                        >
-                                          Achievement Level
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                          <Dropdown.Item>MASTER</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
+                                      <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                     </div>
                                   ))}
                                 </Accordion.Body>
@@ -699,21 +607,7 @@ const Dashboard = () => {
                                       <Form.Label className="goal-label">
                                         {goal.name}
                                       </Form.Label>
-                                      <Dropdown style={{ position: "absolute", right: 0 }}>
-                                        <Dropdown.Toggle
-                                          variant="success"
-                                          id={`dropdown-${min}-${idx}`}
-                                        >
-                                          Achievement Level
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                          <Dropdown.Item>MASTER</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
+                                      <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                     </div>
                                   ))}
                                 </Accordion.Body>
@@ -743,21 +637,7 @@ const Dashboard = () => {
                                       <Form.Label className="goal-label">
                                         {goal.name}
                                       </Form.Label>
-                                      <Dropdown style={{ position: "absolute", right: 0 }}>
-                                        <Dropdown.Toggle
-                                          variant="success"
-                                          id={`dropdown-${min}-${idx}`}
-                                        >
-                                          Achievement Level
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                          <Dropdown.Item>MASTER</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
+                                      <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                     </div>
                                   ))}
                                 </Accordion.Body>
@@ -787,21 +667,7 @@ const Dashboard = () => {
                                       <Form.Label className="goal-label">
                                         {goal.name}
                                       </Form.Label>
-                                      <Dropdown style={{ position: "absolute", right: 0 }}>
-                                        <Dropdown.Toggle
-                                          variant="success"
-                                          id={`dropdown-${min}-${idx}`}
-                                        >
-                                          Achievement Level
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                          <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                          <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                          <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                          <Dropdown.Item>MASTER</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
+                                      <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                     </div>
                                   ))}
                                 </Accordion.Body>
@@ -836,21 +702,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -880,21 +732,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -924,21 +762,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -968,21 +792,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -1012,21 +822,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -1056,21 +852,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>
@@ -1100,21 +882,7 @@ const Dashboard = () => {
                                               <Form.Label className="goal-label">
                                                 {goal.name}
                                               </Form.Label>
-                                              <Dropdown style={{ position: "absolute", right: 0 }}>
-                                                <Dropdown.Toggle
-                                                  variant="success"
-                                                  id={`dropdown-${min}-${idx}`}
-                                                >
-                                                  Achievement Level
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                  <Dropdown.Item>NOT STARTED</Dropdown.Item>
-                                                  <Dropdown.Item>BEGINNER</Dropdown.Item>
-                                                  <Dropdown.Item>INTERMEDIATE</Dropdown.Item>
-                                                  <Dropdown.Item>ADVANCED</Dropdown.Item>
-                                                  <Dropdown.Item>MASTER</Dropdown.Item>
-                                                </Dropdown.Menu>
-                                              </Dropdown>
+                                              <AchievementDropdown goal={goal} idSuffix={`${min}-${idx}`} />
                                             </div>
                                           ))}
                                         </Accordion.Body>

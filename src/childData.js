@@ -54,7 +54,7 @@ export const childData = [
           ],
           "firstName": "Faiza",
           "gender": "FEMALE",
-          "lastName": "Faiza",
+          "lastName": "Afreen",
           "parent": {
             "id": "0dff30a0-f989-459c-b4b2-d59d53858c4c",
             "children": [
@@ -111,7 +111,7 @@ export const childData = [
               "notes": "tandum walking"
             }
           ],
-          "dateOfBirth": "2018-02-10",
+          "dateOfBirth": "2020-02-10",
           "doctors": [
             {
               "id": "1bf27620-cc44-403c-9bee-57619cbdf183",
@@ -122,9 +122,9 @@ export const childData = [
               "phone": "9990548430"
             }
           ],
-          "firstName": "Iqra",
+          "firstName": "Faiza",
           "gender": "FEMALE",
-          "lastName": "Siddiqui",
+          "lastName": "Afroz",
           "parent": {
             "id": "0dff30a0-f989-459c-b4b2-d59d53858c4c",
             "children": [
