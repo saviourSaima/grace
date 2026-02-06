@@ -180,51 +180,6 @@ const Dashboard = () => {
                 </Form>
               </Card.Body>
             </Card>
-            <Card className="dashboard-card">
-              <Card.Body>
-                <Form>
-                  <Form.Group className="mb-3 responsive-form-group">
-                    <Form.Label>Child Name :</Form.Label>
-                    <div className="responsive-input-wrapper">
-                      <Form.Control
-                        type="text"
-                        placeholder="Search child name"
-                        value={searchInput}
-                        onChange={(e) => {
-                          setSearchInput(e.target.value);
-                          setSelectedChild(null);
-                        }}
-                      />
-                      {shouldShowSuggestions && (
-                        <div className="suggestions">
-                          {filteredChildren.map((child, idx) => (
-                            <div key={idx} onClick={() => handleChildSelect(child)} className="suggestion-item">
-                              {child.firstName}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {searchInput && !selectedChild && filteredChildren.length === 0 && (
-                        <div className="suggestions">
-                          <div onClick={handleAddNewChild} className="suggestion-item" style={{ fontWeight: 'bold', color: '#007bff' }}>
-                            + Add new child: {searchInput}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <Form.Label>Age :</Form.Label>
-                    <Form.Control
-                      className="responsive-age-input"
-                      type="text"
-                      value={age}
-                      onChange={(e) => setAge(e.target.value)}
-                      disabled={selectedChild !== null}
-                      placeholder={selectedChild ? 'Auto-calculated' : 'Enter age'}
-                    />
-                  </Form.Group>
-                </Form>
-              </Card.Body>
-            </Card>
 
             <Card className="dashboard-card">
               <Card.Header>
